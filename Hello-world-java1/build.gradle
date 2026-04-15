@@ -1,0 +1,60 @@
+plugins 
+{ 
+    id 'java' 
+    } 
+    
+group 'com.example' 
+version 'V1.0' 
+repositories { 
+    mavenCentral() 
+    }
+
+    dependencies {
+    // Add JUnit dependency for testing
+    testImplementation 'junit:junit:4.13.2'
+}
+
+// Define a task to Run a Test 
+task RunTest(type: Test) {
+    // Specify the directory containing test classes
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    // Optionally configure test options
+    testLogging {
+        // Configure which events to log during test execution
+        events 'passed', 'skipped', 'failed'
+    }
+}
+
+// Define a task to build an executable JAR file
+task BuildJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'com.example.HelloWorld'  // Set the main class for the JAR
+    }
+
+    from sourceSets.main.output  // Include compiled classes in the JAR
+    archiveBaseName = 'hello-world-java'  // Name of the JAR file
+    destinationDirectory = file('build/libs')  // Output directory for the JAR file
+}
+// Modify the defualt  JAR task to include the Main-Class
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.example.HelloWorld' 
+    }
+    from { sourceSets.main.output }
+    archiveBaseName = 'hello-world-java'
+    destinationDirectory = file('build/libs')
+}
+// Task to copy resource files to a specific directory
+task copyResources(type: Copy) {
+    from 'src/main/resources'
+    into 'build/resources/main'
+}
+
+// Task to create a zip archive of the project
+task createZip(type: Zip) {
+    from 'build'
+    archiveFileName = 'project-name.zip'
+    destinationDirectory = file('build/distributions')
+}
+
